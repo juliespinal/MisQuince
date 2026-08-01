@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Memorias - M&J</title>
-        <meta property="og:title" content="Mili & Juli - ¡Nuestra Boda!">
+    <title>Memorias - Los 15 de Uma</title>
+    <meta property="og:title" content="¡Los 15 de Uma!">
     <meta property="og:description"
-        content="Compartí los recuerdos de nuestro casamiento. Entrá acá para subir tus fotos y videos al álbum en vivo.">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        content="Compartí los recuerdos de la fiesta. Entrá acá para subir tus fotos y videos al álbum en vivo.">
+    <meta property="og:image" content="assets/img/preview.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" type="image/png" href="../confirmacion/assets/img/favicon.png">
-    
+    <link rel="icon" type="image/png" href="assets/img/preview.jpg">
+
+    <link rel="stylesheet" href="assets/css/common.css">
     <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
 
     <main class="main-layout">
-        
+
         <section class="hero-section">
+            <video class="hero-media" id="heroVideo" autoplay muted loop playsinline poster="assets/img/fondo.jpg">
+                <!-- TODO: agregar el video de la quinceañera cuando esté disponible -->
+                <!-- <source src="assets/video/hero.mp4" type="video/mp4"> -->
+            </video>
+            <img class="hero-media" id="heroImageFallback" src="assets/img/fondo.jpg" alt="">
             <div class="hero-overlay"></div>
             <div class="hero-text animate__animated animate__fadeIn">
-                <h1>Mili & Juli</h1>
-                <p>Album</b> de la fiesta</p>
+                <h1>Los 15 de Uma</h1>
+                <p>Álbum de la fiesta</p>
             </div>
         </section>
 
         <section class="controls-section animate__animated animate__slideInUp">
-            
+
             <div class="sheet-handle"></div>
 
             <div class="controls-content">
@@ -41,9 +46,14 @@
                 </div>
 
                 <div class="buttons-grid">
-                    <button class="btn-app btn-primary" id="btnUpload">
-                        <i class="fa-solid fa-upload"></i> 
-                        <span>Subir Foto o video</span>
+                    <button class="btn-app btn-primary" id="btnCamera">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Sacar foto o video</span>
+                    </button>
+
+                    <button class="btn-app btn-secondary" id="btnGallery">
+                        <i class="fa-solid fa-upload"></i>
+                        <span>Subir de la galería</span>
                     </button>
 
                     <div class="divider"></div>
@@ -58,7 +68,8 @@
 
     </main>
 
-    <input type="file" id="inputUpload" class="hidden-input" accept="image/*,video/*">
+    <input type="file" id="inputCamera" class="hidden-input" accept="image/*,video/*" capture="environment">
+    <input type="file" id="inputGallery" class="hidden-input" accept="image/*,video/*" multiple>
 
     <div id="preview-modal">
         <div class="modal-card animate__animated animate__zoomIn">
@@ -78,6 +89,8 @@
         <p class="loader-msg">Procesando...</p>
     </div>
 
-    <script src="assets/js/script.js"></script> 
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/ui-modal.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

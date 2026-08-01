@@ -1,23 +1,46 @@
-const scriptURL = 'https://script.google.com/macros/s/AKfycbywW5vlsO6rF5okrfC9KTHvvvfnh9PqCVwozyf0f6SovR1MHOMue5oeyo28utE29GVd/exec';
-const logoPath = 'assets/img/logo_overlay.png';
-const cloudName = "dxxljb2qi";
-const uploadPreset = "boda_mili_juli";
-
 let imagenListaParaEnviar = null;
 let tipoArchivoActual = null;
 let archivoVideoCrudo = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    const inputUpload = document.getElementById('inputUpload');
-    const btnUpload = document.getElementById('btnUpload');
+    const inputCamera = document.getElementById('inputCamera');
+    const inputGallery = document.getElementById('inputGallery');
+    const btnCamera = document.getElementById('btnCamera');
+    const btnGallery = document.getElementById('btnGallery');
 
-    if (btnUpload && inputUpload) {
-        btnUpload.addEventListener('click', () => inputUpload.click());
-        inputUpload.addEventListener('change', procesarArchivo);
-    } else {
-        console.error("No se encontraron los botones en el HTML.");
+    if (btnCamera && inputCamera) {
+        btnCamera.addEventListener('click', () => inputCamera.click());
+        inputCamera.addEventListener('change', (e) => procesarSeleccion(e.target.files));
     }
+
+    if (btnGallery && inputGallery) {
+        btnGallery.addEventListener('click', () => inputGallery.click());
+        inputGallery.addEventListener('change', (e) => procesarSeleccion(e.target.files));
+    }
+
+    inicializarHero();
 });
+
+function inicializarHero() {
+    const video = document.getElementById('heroVideo');
+    const fallback = document.getElementById('heroImageFallback');
+    if (!video || !fallback) return;
+
+    const tieneSource = video.querySelector('source');
+    if (!tieneSource) {
+        video.style.display = 'none';
+        fallback.style.display = 'block';
+        return;
+    }
+
+    video.addEventListener('error', () => {
+        video.style.display = 'none';
+        fallback.style.display = 'block';
+    });
+    video.addEventListener('loadeddata', () => {
+        fallback.style.display = 'none';
+    });
+}
 
 function mostrarLoader(texto) {
     const loaderMsg = document.querySelector('.loader-msg');
@@ -33,12 +56,14 @@ function ocultarLoader() {
 
 function cerrarPreview() {
     const previewModal = document.getElementById('preview-modal');
-    const inputUpload = document.getElementById('inputUpload');
+    const inputCamera = document.getElementById('inputCamera');
+    const inputGallery = document.getElementById('inputGallery');
 
     if (previewModal) previewModal.style.display = 'none';
     imagenListaParaEnviar = null;
     archivoVideoCrudo = null;
-    if (inputUpload) inputUpload.value = '';
+    if (inputCamera) inputCamera.value = '';
+    if (inputGallery) inputGallery.value = '';
 
     const previewVid = document.getElementById('preview-vid');
     if (previewVid) {
@@ -47,103 +72,137 @@ function cerrarPreview() {
     }
 }
 
-function procesarArchivo(e) {
-    if (e.target.files && e.target.files[0]) {
-        const archivo = e.target.files[0];
-        tipoArchivoActual = archivo.type.startsWith('video/') ? 'video' : 'foto';
+function procesarSeleccion(fileList) {
+    if (!fileList || fileList.length === 0) return;
 
-        mostrarLoader("Preparando vista previa...");
+    if (fileList.length === 1) {
+        procesarArchivoConPreview(fileList[0]);
+    } else {
+        procesarVariosArchivos(Array.from(fileList));
+    }
+}
 
-        if (tipoArchivoActual === 'video') {
-            archivoVideoCrudo = archivo;
-            const urlLocal = URL.createObjectURL(archivo);
+function procesarArchivoConPreview(archivo) {
+    tipoArchivoActual = archivo.type.startsWith('video/') ? 'video' : 'foto';
+
+    mostrarLoader("Preparando vista previa...");
+
+    if (tipoArchivoActual === 'video') {
+        archivoVideoCrudo = archivo;
+        const urlLocal = URL.createObjectURL(archivo);
+
+        const previewImg = document.getElementById('preview-img');
+        const previewModal = document.getElementById('preview-modal');
+
+        if (previewImg) previewImg.style.display = 'none';
+
+        let previewVid = document.getElementById('preview-vid');
+        if (!previewVid) {
+            previewVid = document.createElement('video');
+            previewVid.id = 'preview-vid';
+            previewVid.style.width = '100%';
+            previewVid.style.maxHeight = '50vh';
+            previewVid.style.borderRadius = '16px';
+            previewVid.controls = true;
+            const container = document.querySelector('.img-container');
+            if (container) container.appendChild(previewVid);
+        }
+        previewVid.style.display = 'block';
+        previewVid.src = urlLocal;
+
+        ocultarLoader();
+        if (previewModal) previewModal.style.display = 'flex';
+    } else {
+        comprimirImagen(archivo, 1600, 0.7, function (blobFinal) {
+            imagenListaParaEnviar = blobFinal;
+            const v = document.getElementById('preview-vid');
+            if (v) v.remove();
 
             const previewImg = document.getElementById('preview-img');
             const previewModal = document.getElementById('preview-modal');
 
-            if (previewImg) previewImg.style.display = 'none';
-
-            let previewVid = document.getElementById('preview-vid');
-            if (!previewVid) {
-                previewVid = document.createElement('video');
-                previewVid.id = 'preview-vid';
-                previewVid.style.width = '100%';
-                previewVid.style.maxHeight = '50vh';
-                previewVid.style.borderRadius = '16px';
-                previewVid.controls = true;
-                const container = document.querySelector('.img-container');
-                if (container) container.appendChild(previewVid);
+            if (previewImg) {
+                previewImg.style.display = 'block';
+                previewImg.src = URL.createObjectURL(blobFinal);
             }
-            previewVid.style.display = 'block';
-            previewVid.src = urlLocal;
-
             ocultarLoader();
             if (previewModal) previewModal.style.display = 'flex';
-        } else {
-            comprimirImagen(archivo, 1600, 0.7, function (base64Final) {
-                imagenListaParaEnviar = base64Final;
-                const v = document.getElementById('preview-vid');
-                if (v) v.remove();
+        });
+    }
+}
 
-                const previewImg = document.getElementById('preview-img');
-                const previewModal = document.getElementById('preview-modal');
+async function procesarVariosArchivos(archivos) {
+    const confirmado = await UIModal.confirm({
+        title: `¿Subir ${archivos.length} archivos?`,
+        message: 'Se subirán todos al álbum de la fiesta.',
+        confirmText: 'Sí, subir',
+        cancelText: 'Cancelar'
+    });
 
-                if (previewImg) {
-                    previewImg.style.display = 'block';
-                    previewImg.src = "data:image/jpeg;base64," + base64Final;
-                }
-                ocultarLoader();
-                if (previewModal) previewModal.style.display = 'flex';
-            });
+    if (!confirmado) {
+        const inputGallery = document.getElementById('inputGallery');
+        if (inputGallery) inputGallery.value = '';
+        return;
+    }
+
+    UIModal.progress.show(`Subiendo 0 de ${archivos.length}`);
+    let errores = 0;
+
+    for (let i = 0; i < archivos.length; i++) {
+        try {
+            await subirArchivoACloudinary(archivos[i]);
+        } catch (err) {
+            errores++;
         }
+        UIModal.progress.update(i + 1, archivos.length);
+    }
+
+    UIModal.progress.hide();
+
+    const inputGallery = document.getElementById('inputGallery');
+    if (inputGallery) inputGallery.value = '';
+
+    if (errores === 0) {
+        UIModal.notice(`¡${archivos.length} recuerdos subidos!`, { icon: 'fa-solid fa-champagne-glasses' });
+    } else {
+        UIModal.notice(`Se subieron ${archivos.length - errores} de ${archivos.length}. ${errores} fallaron.`, { isError: true });
     }
 }
 
 function subirFotoDefinitiva() {
-    mostrarLoader("Subiendo recuerdo... ☁️");
+    mostrarLoader("Subiendo recuerdo...");
 
-    if (tipoArchivoActual === 'video' && archivoVideoCrudo) {
-        const formDataCloudinary = new FormData();
-        formDataCloudinary.append("file", archivoVideoCrudo);
-        formDataCloudinary.append("upload_preset", uploadPreset);
+    const archivo = tipoArchivoActual === 'video' ? archivoVideoCrudo : imagenListaParaEnviar;
+    if (!archivo) return;
 
-        fetch(`https://api.cloudinary.com/v1_1/${cloudName}/video/upload`, {
-            method: "POST",
-            body: formDataCloudinary
+    subirArchivoACloudinary(archivo)
+        .then(() => {
+            ocultarLoader();
+            const mensaje = tipoArchivoActual === 'video' ? '¡Video guardado!' : '¡Foto guardada!';
+            UIModal.notice(mensaje, { icon: 'fa-solid fa-champagne-glasses' });
+            cerrarPreview();
         })
-            .then(res => res.json())
-            .then(data => {
-                const formDataDrive = new FormData();
-                formDataDrive.append('videoUrl', data.secure_url);
-                formDataDrive.append('nombreArchivo', "video_" + Date.now());
-                return fetch(scriptURL, { method: 'POST', body: formDataDrive });
-            })
-            .then(() => {
-                ocultarLoader();
-                alert("¡Video guardado! 🎉");
-                cerrarPreview();
-            })
-            .catch(err => {
-                ocultarLoader();
-                alert("Error al subir video.");
-            });
+        .catch(() => {
+            ocultarLoader();
+            const mensaje = tipoArchivoActual === 'video' ? 'Error al subir el video.' : 'Error al subir la foto.';
+            UIModal.notice(mensaje, { isError: true });
+        });
+}
 
-    } else if (tipoArchivoActual === 'foto' && imagenListaParaEnviar) {
-        const formData = new FormData();
-        formData.append('imagen', imagenListaParaEnviar);
-        formData.append('nombreArchivo', "foto_" + Date.now() + ".jpg");
+function subirArchivoACloudinary(archivo) {
+    const formData = new FormData();
+    formData.append('file', archivo);
+    formData.append('upload_preset', APP_CONFIG.uploadPreset);
+    formData.append('folder', APP_CONFIG.folder);
+    formData.append('tags', APP_CONFIG.tag);
 
-        fetch(scriptURL, { method: 'POST', body: formData })
-            .then(() => {
-                ocultarLoader();
-                alert("¡Foto guardada! 🎉");
-                cerrarPreview();
-            })
-            .catch(() => {
-                ocultarLoader();
-                alert("Error al subir foto.");
-            });
-    }
+    return fetch(`https://api.cloudinary.com/v1_1/${APP_CONFIG.cloudName}/auto/upload`, {
+        method: 'POST',
+        body: formData
+    }).then(res => {
+        if (!res.ok) throw new Error('Upload failed');
+        return res.json();
+    });
 }
 
 function comprimirImagen(archivo, maxWidth, calidad, callback) {
@@ -159,7 +218,7 @@ function comprimirImagen(archivo, maxWidth, calidad, callback) {
             canvas.width = width * ratio; canvas.height = height * ratio;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            callback(canvas.toDataURL('image/jpeg', calidad).split(',')[1]);
+            canvas.toBlob(callback, 'image/jpeg', calidad);
         };
     };
 }

@@ -1,31 +1,210 @@
-        #galeria {
-        column-count: 2; 
-        column-gap: 15px;
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
+:root {
+    --bg-color: #fcfbf7;
+    --header-bg: rgba(252, 251, 247, 0.7);
+    --text-main: #3a4128;
+    --accent: #606e36;
+    --primary: #606e36;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+}
+
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+    box-sizing: border-box;
+    z-index: 1000;
+    background: var(--header-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header-title h1 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.1;
+}
+
+.header-count {
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 500;
+}
+
+.gallery-container {
+    padding: 68px 12px 24px 12px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+#galeria {
+    column-count: 2;
+    column-gap: 12px;
+}
+
+.foto-item {
+    width: 100%;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    display: block;
+    break-inside: avoid;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.video-wrapper {
+    position: relative;
+    display: block;
+    margin-bottom: 12px;
+    break-inside: avoid;
+}
+
+.play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 50%;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--primary);
+    pointer-events: none;
+}
+
+.empty-state {
+    text-align: center;
+    color: var(--accent);
+    padding: 60px 20px;
+    column-span: all;
+}
+
+.empty-state i {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+.viewer-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(252, 251, 247, 0.98);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.viewer-content {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 12px;
+}
+
+.viewer-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn-action-viewer {
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.1s;
+}
+
+.btn-action-viewer:active {
+    transform: scale(0.95);
+}
+
+.btn-share {
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-close {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(96, 110, 54, 0.3);
+}
+
+#loader-inicial {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #ccc;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (min-width: 768px) {
+    #galeria {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1024px) {
+    .gallery-container {
+        padding-top: 76px;
     }
 
-    .foto-item {
-        width: 100%;
-        margin-bottom: 15px;
-        border-radius: 12px;
-        display: block;
-        break-inside: avoid; 
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-    }
-    .foto-item:hover {
-        transform: scale(1.02);
+    .app-header {
+        height: 60px;
     }
 
-    @media (min-width: 768px) {
-        #galeria {
-            column-count: 3;
-        }
+    #galeria {
+        column-count: 4;
     }
-    @media (min-width: 1024px) {
-        #galeria {
-            column-count: 4;
-        }
+}
+
+@media (min-width: 1400px) {
+    #galeria {
+        column-count: 5;
     }
+}
