@@ -193,7 +193,6 @@ function subirArchivoACloudinary(archivo) {
     const formData = new FormData();
     formData.append('file', archivo);
     formData.append('upload_preset', APP_CONFIG.uploadPreset);
-    formData.append('folder', APP_CONFIG.folder);
     formData.append('tags', APP_CONFIG.tag);
 
     return fetch(`https://api.cloudinary.com/v1_1/${APP_CONFIG.cloudName}/auto/upload`, {
