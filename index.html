@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Memorias - M&J</title>
+        <meta property="og:title" content="Mili & Juli - ¡Nuestra Boda!">
+    <meta property="og:description"
+        content="Compartí los recuerdos de nuestro casamiento. Entrá acá para subir tus fotos y videos al álbum en vivo.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="../confirmacion/assets/img/favicon.png">
+    
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+
+    <main class="main-layout">
+        
+        <section class="hero-section">
+            <div class="hero-overlay"></div>
+            <div class="hero-text animate__animated animate__fadeIn">
+                <h1>Mili & Juli</h1>
+                <p>Album</b> de la fiesta</p>
+            </div>
+        </section>
+
+        <section class="controls-section animate__animated animate__slideInUp">
+            
+            <div class="sheet-handle"></div>
+
+            <div class="controls-content">
+                <div class="welcome-text">
+                    <h2>¡Bienvenidos!</h2>
+                    <p>Ayudanos a crear el álbum de la fiesta.</p>
+                </div>
+
+                <div class="buttons-grid">
+                    <button class="btn-app btn-primary" id="btnUpload">
+                        <i class="fa-solid fa-upload"></i> 
+                        <span>Subir Foto o video</span>
+                    </button>
+
+                    <div class="divider"></div>
+
+                    <a href="album/album.html" class="btn-app btn-outline">
+                        <i class="fa-regular fa-images"></i>
+                        <span>Ver el Álbum</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <input type="file" id="inputUpload" class="hidden-input" accept="image/*,video/*">
+
+    <div id="preview-modal">
+        <div class="modal-card animate__animated animate__zoomIn">
+            <h3>¿Subimos esta?</h3>
+            <div class="img-container">
+                <img id="preview-img" src="" />
+            </div>
+            <div class="modal-actions">
+                <button class="btn-app btn-outline" onclick="cerrarPreview()">Reintentar</button>
+                <button class="btn-app btn-primary" onclick="subirFotoDefinitiva()">Sí, subir</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader-modal">
+        <div class="ios-spinner"></div>
+        <p class="loader-msg">Procesando...</p>
+    </div>
+
+    <script src="assets/js/script.js"></script> 
+</body>
+</html>

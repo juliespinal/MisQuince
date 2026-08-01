@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Álbum - M&J</title>
+    <meta property="og:title" content="Mili & Juli - ¡Nuestra Boda!">
+    <meta property="og:description"
+        content="Compartí los recuerdos de nuestro casamiento. Entrá acá para subir tus fotos y videos al álbum en vivo.">
+    <meta property="og:image" content="https://bodamiliyjuli.com.ar/memorias/assets/img/preview.png">
+    <meta property="og:url" content="https://bodamiliyjuli.com.ar/memorias/album/album.html">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mili & Juli - ¡Nuestra Boda!">
+    <meta name="twitter:description"
+        content="Compartí los recuerdos de nuestro casamiento. Entrá acá para subir tus fotos y videos al álbum en vivo.">
+    <meta name="twitter:image" content="https://bodamiliyjuli.com.ar/memorias/assets/img/preview.jpg">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="icon" type="image/png" href="../../confirmacion/assets/img/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #fcfbf7;
+            --header-bg: rgba(252, 251, 247, 0.8);
+            --text-main: #3a4128;
+            --accent: #606e36;
+            --primary: #606e36;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+        }
+
+        .app-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+            background: var(--header-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            color: var(--text-main);
+        }
+
+        .header-title span {
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        .gallery-container {
+            padding: 90px 15px 30px 15px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        #galeria {
+            column-count: 2;
+            column-gap: 15px;
+        }
+
+        .foto-item {
+            width: 100%;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            display: block;
+            break-inside: avoid;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-wrapper {
+            position: relative;
+            display: block;
+            margin-bottom: 15px;
+            break-inside: avoid;
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        .viewer-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(252, 251, 247, 0.98);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .viewer-content {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 12px;
+        }
+
+        .viewer-actions { 
+            display: flex; 
+            gap: 15px; 
+            margin-top: 20px; 
+        }
+        .btn-action-viewer { 
+            padding: 12px 25px; 
+            border-radius: 50px; 
+            font-weight: 600; 
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            cursor: pointer; 
+            border: none;
+            transition: transform 0.1s;
+        }
+        .btn-action-viewer:active { transform: scale(0.95); }
+        .btn-share { 
+            background: #ffffff; 
+            color: var(--primary); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .btn-close { 
+            background: var(--primary); 
+            color: white; 
+            box-shadow: 0 4px 12px rgba(96, 110, 54, 0.3);
+        }
+
+        #loader-inicial {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #ccc;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (min-width: 768px) {
+            #galeria {
+                column-count: 4;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="header-title">
+            <h1>Mili & Juli</h1><span>Álbum Compartido</span>
+        </div>
+    </header>
+    <div id="loader-inicial">
+        <div class="spinner"></div>
+        <p>Buscando recuerdos...</p>
+    </div>
+    <main class="gallery-container">
+        <div id="galeria"></div>
+    </main>
+    <div id="viewerModal" class="viewer-modal">
+        <div id="viewerContainer" style="width: 100%; text-align: center;"></div>
+        
+        <div class="viewer-actions">
+            <button class="btn-action-viewer btn-share" onclick="compartirRecuerdo()">
+                <i class="fa-solid fa-share-nodes"></i> Compartir
+            </button>
+            <button class="btn-action-viewer btn-close" onclick="cerrarVisualizador()">
+                Cerrar
+            </button>
+        </div>
+    </div>
+    <script src="assets/js/galeria.js?v=1.0"></script>
+</body>
+
+</html>
