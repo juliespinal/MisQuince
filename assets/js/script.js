@@ -204,7 +204,20 @@ function subirArchivoACloudinary(archivo) {
             throw new Error(detalle?.error?.message || 'Upload failed');
         }
         return res.json();
+    }).then(data => {
+        return registrarEnAppsScript(data).then(() => data);
     });
+}
+
+function registrarEnAppsScript(dataCloudinary) {
+    const tipo = dataCloudinary.resource_type === 'video' ? 'video' : 'foto';
+    const params = new URLSearchParams();
+    params.append('url', dataCloudinary.secure_url);
+    params.append('tipo', tipo);
+    params.append('nombreArchivo', dataCloudinary.public_id);
+
+    return fetch(APP_CONFIG.scriptURL, { method: 'POST', body: params })
+        .catch(err => console.error('Error registrando en Apps Script:', err));
 }
 
 function comprimirImagen(archivo, maxWidth, calidad, callback) {

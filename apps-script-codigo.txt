@@ -1,0 +1,107 @@
+/**
+ * Apps Script para el álbum de Los 15 de Umi.
+ *
+ * Qué hace:
+ * - Recibe (POST) el aviso de que se subió una foto o video a Cloudinary,
+ *   y guarda una fila en una Google Sheet con: id, tipo, url, fecha.
+ * - Responde (GET) con el listado completo en JSON para que el álbum
+ *   lo muestre.
+ *
+ * CÓMO INSTALARLO:
+ * 1. Andá a https://script.google.com/ y creá un proyecto nuevo.
+ * 2. Borrá el contenido de "Código.gs" (o "Code.gs") y pegá TODO este archivo.
+ * 3. Arriba a la izquierda, click en "Google Sheets" no hace falta crearlo
+ *    a mano: la primera vez que el script corra, va a crear automáticamente
+ *    una hoja de cálculo llamada "Umi - Album" en tu Google Drive (o podés
+ *    crearla vos y pegar su ID en SHEET_ID más abajo, ver paso 4).
+ * 4. (Opcional pero recomendado) Creá una Google Sheet vacía en tu Drive,
+ *    abrila, copiá el ID que aparece en la URL entre /d/ y /edit, y pegalo
+ *    en la constante SHEET_ID de abajo. Si dejás SHEET_ID vacío ("") el
+ *    script crea y reutiliza una hoja propia automáticamente.
+ * 5. Arriba, click en "Implementar" > "Nueva implementación".
+ *    - Tipo: "Aplicación web".
+ *    - Ejecutar como: "Yo (tu cuenta)".
+ *    - Quién tiene acceso: "Cualquier usuario" (Anyone).
+ * 6. Copiá la URL que te da ("Web app URL", termina en /exec) y pasásela
+ *    a Claude para reemplazar el scriptURL en config.js.
+ * 7. Cada vez que edites este código después de la primera implementación,
+ *    tenés que hacer "Implementar" > "Gestionar implementaciones" > ícono
+ *    de lápiz > "Nueva versión" > "Implementar", para que los cambios se
+ *    reflejen en la misma URL (si no, la URL sigue sirviendo el código viejo).
+ */
+
+// Si ya tenés una Sheet creada y querés usar esa, pegá su ID acá adentro
+// de las comillas. Si lo dejás vacío, el script crea una hoja propia sola.
+const SHEET_ID = "";
+const SHEET_NAME = "Recuerdos";
+
+function getSheet() {
+  let spreadsheet;
+  if (SHEET_ID) {
+    spreadsheet = SpreadsheetApp.openById(SHEET_ID);
+  } else {
+    const files = DriveApp.getFilesByName("Umi - Album (no borrar)");
+    if (files.hasNext()) {
+      spreadsheet = SpreadsheetApp.open(files.next());
+    } else {
+      spreadsheet = SpreadsheetApp.create("Umi - Album (no borrar)");
+    }
+  }
+
+  let sheet = spreadsheet.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(SHEET_NAME);
+    sheet.appendRow(["id", "tipo", "url", "fecha"]);
+  }
+  return sheet;
+}
+
+function doPost(e) {
+  try {
+    const params = e.parameter;
+    const url = params.url;
+    const tipo = params.tipo === "video" ? "video" : "foto";
+    const nombreArchivo = params.nombreArchivo || ("recuerdo_" + new Date().getTime());
+
+    if (!url) {
+      return jsonResponse({ result: "error", message: "Falta el parámetro url" });
+    }
+
+    const sheet = getSheet();
+    const id = nombreArchivo + "_" + new Date().getTime();
+    sheet.appendRow([id, tipo, url, new Date().toISOString()]);
+
+    return jsonResponse({ result: "success", id: id });
+  } catch (err) {
+    return jsonResponse({ result: "error", message: err.message });
+  }
+}
+
+function doGet(e) {
+  try {
+    const sheet = getSheet();
+    const data = sheet.getDataRange().getValues();
+    const filas = data.slice(1); // saltea la fila de encabezados
+
+    const fotos = filas
+      .filter(function (fila) { return fila[0] && fila[2]; })
+      .map(function (fila) {
+        return {
+          id: fila[0],
+          tipo: fila[1],
+          url: fila[2],
+          fecha: fila[3]
+        };
+      });
+
+    return jsonResponse({ result: "success", fotos: fotos });
+  } catch (err) {
+    return jsonResponse({ result: "error", message: err.message });
+  }
+}
+
+function jsonResponse(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}

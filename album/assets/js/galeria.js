@@ -8,39 +8,19 @@ let esPrimeraCarga = true;
 let urlActualParaCompartir = '';
 let tipoActualParaCompartir = '';
 
-function urlThumbnailVideo(publicId) {
-    return `https://res.cloudinary.com/${APP_CONFIG.cloudName}/video/upload/so_0/${publicId}.jpg`;
-}
-
-async function obtenerRecursosPorTag(tipo) {
-    const url = `https://res.cloudinary.com/${APP_CONFIG.cloudName}/${tipo}/list/${APP_CONFIG.tag}.json`;
-    const res = await fetch(url);
-    if (!res.ok) return [];
-    const data = await res.json();
-    return (data.resources || []).map(r => ({
-        id: r.public_id,
-        tipo: tipo === 'video' ? 'video' : 'foto',
-        url: `https://res.cloudinary.com/${APP_CONFIG.cloudName}/${tipo}/upload/${r.public_id}.${r.format}`,
-        publicId: r.public_id,
-        creado: r.created_at || null
-    }));
+function urlThumbnailVideo(url) {
+    return url.replace(/\.(mp4|mov|webm)$/i, '.jpg');
 }
 
 async function cargarFotos() {
     try {
-        const [fotos, videos] = await Promise.all([
-            obtenerRecursosPorTag('image'),
-            obtenerRecursosPorTag('video')
-        ]);
-
-        const todos = [...fotos, ...videos].sort((a, b) => {
-            if (!a.creado || !b.creado) return 0;
-            return new Date(a.creado) - new Date(b.creado);
-        });
+        const res = await fetch(APP_CONFIG.scriptURL);
+        const data = await res.json();
+        if (data.result !== 'success') return;
 
         if (esPrimeraCarga && loader) loader.style.display = 'none';
 
-        todos.forEach(item => {
+        data.fotos.slice().reverse().forEach(item => {
             if (recursosCargados.has(item.id)) return;
             recursosCargados.add(item.id);
 
@@ -51,7 +31,7 @@ async function cargarFotos() {
                 wrapper.onclick = () => abrirVisualizador(item.url, 'video');
 
                 const img = document.createElement('img');
-                img.src = urlThumbnailVideo(item.publicId);
+                img.src = urlThumbnailVideo(item.url);
                 img.className = "foto-item";
                 img.loading = "lazy";
 
