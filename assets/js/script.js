@@ -193,13 +193,16 @@ function subirArchivoACloudinary(archivo) {
     const formData = new FormData();
     formData.append('file', archivo);
     formData.append('upload_preset', APP_CONFIG.uploadPreset);
-    formData.append('tags', APP_CONFIG.tag);
 
     return fetch(`https://api.cloudinary.com/v1_1/${APP_CONFIG.cloudName}/auto/upload`, {
         method: 'POST',
         body: formData
-    }).then(res => {
-        if (!res.ok) throw new Error('Upload failed');
+    }).then(async res => {
+        if (!res.ok) {
+            const detalle = await res.json().catch(() => null);
+            console.error('Cloudinary upload error:', res.status, detalle);
+            throw new Error(detalle?.error?.message || 'Upload failed');
+        }
         return res.json();
     });
 }
