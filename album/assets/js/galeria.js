@@ -55,7 +55,7 @@ async function cargarFotos() {
 
         if (contador) {
             const total = recursosCargados.size;
-            contador.textContent = total > 0 ? `${total} recuerdo${total === 1 ? '' : 's'}` : '';
+            contador.textContent = total > 0 ? `${total} archivo${total === 1 ? '' : 's'}` : '';
         }
 
         if (esPrimeraCarga && recursosCargados.size === 0) {
@@ -76,7 +76,7 @@ function mostrarEstadoVacio() {
     const empty = document.createElement('div');
     empty.id = 'emptyState';
     empty.className = 'empty-state';
-    empty.innerHTML = '<i class="fa-regular fa-images"></i><p>Todavía no hay recuerdos. ¡Sé el primero en subir uno!</p>';
+    empty.innerHTML = '<i class="fa-regular fa-images"></i><p>Todavía no hay archivos. ¡Sé el primero en subir uno!</p>';
     contenedor.appendChild(empty);
 }
 
@@ -124,7 +124,7 @@ async function compartirRecuerdo() {
     if (navigator.share) {
         try {
             await navigator.share({
-                title: 'Los 15 de Uma',
+                title: 'Uma - Mis quince',
                 text: '¡Mirá este recuerdo de la fiesta!',
                 url: linkMagico
             });

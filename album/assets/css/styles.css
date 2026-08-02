@@ -17,6 +17,9 @@ body {
     background-color: var(--bg-color);
     font-family: 'Outfit', sans-serif;
     color: var(--text-main);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
 }
 
 .app-header {
@@ -52,9 +55,12 @@ body {
 }
 
 .gallery-container {
+    flex: 1;
     padding: 68px 12px 24px 12px;
     max-width: 1400px;
+    width: 100%;
     margin: 0 auto;
+    box-sizing: border-box;
 }
 
 #galeria {
