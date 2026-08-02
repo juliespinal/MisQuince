@@ -129,12 +129,23 @@ async function compartirRecuerdo() {
                 url: linkMagico
             });
         } catch (error) {
-            console.log('Error compartiendo:', error);
+            if (error.name === 'AbortError') return;
+            console.error('Error compartiendo:', error);
+            copiarEnlaceComoFallback(linkMagico);
         }
     } else {
-        navigator.clipboard.writeText(linkMagico);
-        UIModal.notice('Enlace copiado. ¡Ya podés compartirlo en redes o por mensajes!', { icon: 'fa-solid fa-link' });
+        copiarEnlaceComoFallback(linkMagico);
     }
+}
+
+function copiarEnlaceComoFallback(link) {
+    navigator.clipboard.writeText(link)
+        .then(() => {
+            UIModal.notice('Enlace copiado. ¡Ya podés compartirlo en redes o por mensajes!', { icon: 'fa-solid fa-link' });
+        })
+        .catch(() => {
+            UIModal.notice('No se pudo copiar el enlace.', { isError: true });
+        });
 }
 
 function revisarUrlCompartida() {

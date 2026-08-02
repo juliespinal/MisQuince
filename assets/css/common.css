@@ -3,7 +3,7 @@
 .ui-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: 9999;
     background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(3px);
     display: flex;
@@ -69,7 +69,7 @@
     margin: 0 auto 14px;
     font-size: 1.5rem;
     background: rgba(96, 110, 54, 0.12);
-    color: var(--primary, #606e36);
+    color: var(--primary, #042008);
 }
 
 .ui-modal-icon.is-error {
@@ -119,7 +119,7 @@
 }
 
 .ui-modal-btn.is-confirm {
-    background: var(--primary, #606e36);
+    background: var(--primary, #042008);
     color: #fff;
 }
 
@@ -142,7 +142,7 @@
 .ui-progress-fill {
     height: 100%;
     width: 0%;
-    background: var(--primary, #606e36);
+    background: var(--primary, #042008);
     border-radius: 8px;
     transition: width 0.3s ease;
 }
@@ -153,7 +153,7 @@
     background: #eeeeee;
     color: #6b7280;
     text-align: center;
-    font-size: 0.72rem;
+    font-size: 0.62rem;
     line-height: 1.4;
     padding: 8px 16px;
     margin-top: 14px;

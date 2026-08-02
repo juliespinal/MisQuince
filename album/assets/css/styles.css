@@ -2,8 +2,9 @@
     --bg-color: #fcfbf7;
     --header-bg: rgba(252, 251, 247, 0.7);
     --text-main: #3a4128;
-    --accent: #606e36;
-    --primary: #606e36;
+    --accent: #074e11;
+    --primary: #24492E;
+    --primary-dark: #042008;
 }
 
 * {
@@ -52,6 +53,29 @@ body {
     font-size: 0.75rem;
     color: var(--accent);
     font-weight: 500;
+}
+
+.header-camera-btn {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary);
+    color: #fff;
+    font-size: 1rem;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.header-camera-btn:active {
+    transform: translate(-50%, -50%) scale(0.92);
 }
 
 .gallery-container {
